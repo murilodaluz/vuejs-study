@@ -262,7 +262,9 @@ Repository for study notes of VueJS
 * Dentro dela é possível realizar os cálculos simples, condições ternarias...
     * `{{ (variavel * 2 ) + 10 }}` ou `{{ (variavel > 10)? 'Maior que 10' : 'Menor que 10' }}`
     ### Computed [(Doc)](https://br.vuejs.org/v2/guide/computed.html#Dados-Computados)
-    * Quando deve se tem uma estrutura onde uma interpolação resultado de uma ação em tela, pode ser utilizado como função computada para só ser chamada quando houver uma diferença que faça efeito nessa interpolação
+    * Para evitar uso desnecessária de recurso, usa-se os dados computados que irão ser cacheados de acordo com suas \
+    dependências reativas. Um dado computado somente sera reavaliado quando alguma de suas dependências forem alteradas \
+    se não era retornar o valor em cache sem precisar reprocessar a informação.
     * Ex:
     ```html
     <div id="app">
@@ -303,9 +305,9 @@ Repository for study notes of VueJS
     </script>
     ```
     ### Watch [(Doc)](https://br.vuejs.org/v2/guide/computed.html#Observadores)
-    * Para escutar a alteração de uma propriedade, e com isso poder tomar uma ação pode ser utilizado o `watch`
-    * Para usar o `watch`, adiciona-se um novo objeto com as funções que callback contando o mesmo nome da propriedade presente no `data`
-    * Uma função do `watch` sempre recebe no primeiro parâmetro o novo valor e no segundo parâmetro o valor antigo.
+    * O `watch` serve para escutar a alteração de uma propriedade e com isso executar ação 
+    * Para usar o `watch`, adiciona-se um novo objeto com as funções que callback contendo o mesmo nome da propriedade presente no `data`
+    * Uma função do `watch` sempre recebe no primeiro parâmetro o novo valor e no segundo parâmetro o valor antigo
     * Ex:
     ```html
     <div id="app">
@@ -544,5 +546,52 @@ new Vue({
     <div v-for="n in 10">
         {{ n }}
     </div>
+    ```
+## Dom virtual
+* VueJs trabalha como conceito de uma DOM virtual, ou seja uma cópia do estado da DOM no ambiente do javascript, com isso possibilitando uma melhor performance na renderização dos componente.
+* Possibilita que o Vue analise dentro da DOM virtual, quais os elementos que devem ser renderizado de uma forma precisa
+    ### Ciclo de vida da intancia
+    ![Life cycle - Vuejs.org](./images/lifecycle.png)
+
+    * Para interação com cada etapa do ciclo de vida da intancia existem metodos para interagir com os estados.
+    ```html
+    <div id="app">
+        <h1>{{ titulo }}</h1>
+        <button @click="titulo += '#'"> Alterar titulo </button> 
+        <button @click="$destroy()"> Destruir </button>
+    </div>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                titulo: 'VueJs'
+            },
+            beforeCreate(){
+                console.log('Antes de criar');
+            },
+            created(){
+                console.log('criado');
+            },
+            beforeMount(){
+                console.log('Antes de montar (DOM)');
+            },
+            mounted(){
+                console.log('Montado na DOM');
+            },
+            beforeUpdate(){
+                console.log('Antes de atualizar');
+            },
+            updated(){
+                console.log('Atualizado');
+            },
+            beforeDestroy(){
+                console.log('Antes de destruir');
+            },
+            destroyed(){
+                console.log('Destruido');
+            }
+
+        })
+    </script> 
     ```
 ## Componentes
