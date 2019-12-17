@@ -1,6 +1,11 @@
 ## Vue
 * Vue é um framework para desenvolvimento do front-end 
-* Leve e promete trazer o melhor de Angular e React
+* Suas principais características 
+    - Virtual Dom - É uma representação leve em memoria da arvore do DOM html original.
+    - Componentes - Usado para criar elementos reutilizáveis em uma aplicação VueJs
+    - Templates - Prove templates baseados em HTML que lincados com o DOM através da instancia do Vue data
+    - Routing - Navegação por paginas é possível pelo vue-router
+    - Leve - VueJs é uma biblioteca leve comparada com os outros frameworks
 * Ex:
     ```html
     <template>
@@ -303,7 +308,7 @@
     </script>
     ```
     ### Watch [(Doc)](https://br.vuejs.org/v2/guide/computed.html#Observadores)
-    * O `watch` serve para escutar a alteração de uma propriedade e com isso executar ação 
+    * O `watch` serve para escutar a alteração de uma propriedade e com isso executar ação ---- watch deep
     * Para usar o `watch`, adiciona-se um novo objeto com as funções que callback contendo o mesmo nome da propriedade presente no `data`
     * Uma função do `watch` sempre recebe no primeiro parâmetro o novo valor e no segundo parâmetro o valor antigo
     * Ex:
