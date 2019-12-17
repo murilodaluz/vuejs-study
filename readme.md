@@ -1,4 +1,6 @@
-### Vue
+# vuejs-study
+Repository for study notes of VueJS
+## Vue
 * Vue é um framework para desenvolvimento do front-end 
 * Leve e promete trazer o melhor de Angular e React
 * Ex:
