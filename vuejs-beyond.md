@@ -864,3 +864,244 @@ basta o bind ser feito em cada elemento com a mesma variável array.
         </script>
         ```
 
+## Filters [(Doc)](https://br.vuejs.org/v2/guide/filters.html)
+* Filtros são utilizado para atualizar no valor que esta sendo interpolado ou no `v-bind`
+    - Ex:
+        ```html
+        <template>
+            <!-- ira aplicar o filter maskCpf ao valor da variável cpf -->
+            <p>{{ cpf | maskCpf }}</p>
+        </template>
+        <script>
+            export default {
+                filters: {
+                    maskCpf(valor){
+                        const arr = valor.split('');
+                        arr.splice(3, 0, ".");
+                        arr.splice(7, 0, ".");
+                        arr.splice(11, 0, "-");
+
+                        // Esse retorno substituirá o valor que esta sendo interpolado, no caso vai passar o cpf com a mascara
+                        return arr.join('');
+                    }
+                }
+                data(){
+                    cpf: '01400887202'
+                }
+            }
+        </script>
+        ```
+    * Um filter também pode ser registrado globalmente
+    - Ex:
+        ```javascript
+        import Vue from 'vue'
+        [...]
+
+        Vue.filter('inverter', function(valor){
+            valor.split('').reverse().join('');
+        })
+
+        [...]
+        ```
+        ```html
+        <template>
+            <!-- ira aplicar o filter maskCpf ao valor da variável cpf -->
+            <!-- 'inverter' é o filter registrado globalmente -->
+            <p>{{ cpf | maskCpf | inverter }}</p>
+        </template>
+        <script>
+            export default {
+                filters: {
+                    maskCpf(valor){
+                        const arr = valor.split('');
+                        arr.splice(3, 0, ".");
+                        arr.splice(7, 0, ".");
+                        arr.splice(11, 0, "-");
+
+                        // Esse retorno substituirá o valor que esta sendo interpolado, no caso vai passar o cpf com a mascara
+                        return arr.join('');
+                    }
+                }
+                data(){
+                    cpf: '01400887202'
+                }
+            }
+        </script>
+        ```
+## Mixins [(Doc)](https://br.vuejs.org/v2/guide/mixins.html)
+* Uma solução para evitar duplicidade de código
+* Ele trabalha para fazer um merge de um objeto exportado contendo `data`, `methods`, `computed`... no componente em questão
+* Caso aja conflito entre nome de dados ou métodos o Vue ira dar prioridade para os declarados no componente
+    - Ex:
+        ```javascript
+        // File: dadosDuplicados.vue
+        export default {
+            data() {
+                return {
+                    dadoduplicado: '',
+                    arrayduplicado: [1, 2 ,3 ,4, 5]
+                }
+            },
+            methods: {
+                metodoDuplicado(){
+                    alert("Exemplo de método duplicado");
+                }
+            }
+        }
+        ```        
+        ```html
+        <template>
+            <!-- ira aplicar o filter maskCpf ao valor da variável cpf -->
+            <p>{{ cpf | maskCpf }}</p>
+            <p>{{ dadoduplicado }}</p>
+            <span v-for="duplicado in arrayduplicado">
+                {{ duplicado }}</span>
+            <button @click="metodoDuplicado"> Chama método duplicado </button>
+        </template>
+        <script>
+            import dadosDuplicados from './dadosDuplicados'
+            export default {
+                //Nesse momento com o mixins sera mesclado os dados e métodos do arquivo dadosDuplicados
+                mixins: [ dadosDuplicados ]
+                filters: {
+                    maskCpf(valor){
+                        const arr = valor.split('');
+                        arr.splice(3, 0, ".");
+                        arr.splice(7, 0, ".");
+                        arr.splice(11, 0, "-");
+
+                        // Esse retorno substituirá o valor que esta sendo interpolado, no caso vai passar o cpf com a mascara
+                        return arr.join('');
+                    }
+                }
+                data(){
+                    cpf: '01400887202'
+                }
+            }
+        </script>
+        ```
+    * mixins pode ser definido também de forma global
+    - Ex:
+        ```javascript
+        import Vue from 'vue'
+        [...]
+
+        Vue.mixins({
+            created(){
+                // Sendo um método do ciclo de vida em um mixins global, sera chamado em todas os componente da aplicação inclusive na instancia do vue
+                console.log('Created - mixing global');
+            }
+        })
+
+        [...]
+        ```
+        ```html
+        <template>
+            <!-- ira aplicar o filter maskCpf ao valor da variável cpf -->
+            <!-- 'inverter' é o filter registrado globalmente -->
+            <p>{{ cpf | maskCpf | inverter }}</p>
+        </template>
+        <script>
+            export default {
+                filters: {
+                    maskCpf(valor){
+                        const arr = valor.split('');
+                        arr.splice(3, 0, ".");
+                        arr.splice(7, 0, ".");
+                        arr.splice(11, 0, "-");
+
+                        // Esse retorno substituirá o valor que esta sendo interpolado, no caso vai passar o cpf com a mascara
+                        return arr.join('');
+                    }
+                }
+                data(){
+                    cpf: '01400887202'
+                }
+            }
+        </script>
+        ```
+## Transição e Animações
+* Para trabalhar com as transições e animações no vue, tem disponível a tag `<transition>` que ira englobar a tag que sofrera a transição
+* Essas podem ser feita via css ou javascript
+* No CSS ele trabalhar com classes contendo a nomenclatura padrão definida no framework
+    * A nomenclatura da classe e gerada automaticamente, se na tag `<transition>` for definido um nome ele sera o prefixo se não o padrão e `v`
+    * Pode ser utilizado um nomenclatura personalizada 
+        - Ex: `<transition name="fade"><div> Qualquer coisa </div></transition>`  a classe fica `fade-enter`
+    * As classes padrões são:
+        * `*-enter` : Defini o css do primeiro frame ao começar a transição/animação
+        * `*-enter-active` :  Defini o css durante a transição/animação
+        * `*-enter-to` : Defini o css no final da transição/animação
+        * `*-leave` : Defini o css do primeiro frame ao desfazer a transição/animação
+        * `*-leave-active` : Defini o css durante a transição/animação
+        * `*-leave-to` : Defini o css ao final da transição/animação de saida
+    - Ex: 
+        ```html
+        <template>
+            <button @click="exibir = !exibir"></button>
+            <transition name="fade">
+                <div v-if="exibir"> Div que ira participar da transição </div>
+            </transition>
+            <transition name="slide">
+                <div v-if="exibir"> Div que ira participar da transição </div>
+            </transition>
+        </template>
+        <script>
+            data(){
+                return {
+                    exibir = false
+                }
+            }
+        </script>
+        <style>
+            .fade-enter {
+                opacity: 0;
+            }
+
+            .fade-enter-active {
+                transition: opacity 2s;
+            }
+
+            .fade-enter-to {
+                opacity: 1;
+            }
+
+            .fade-leave {
+                opacity: 1;
+            }
+
+            .fade-leave-active {
+                transition: opacity 2s;
+            }
+
+            .fade-leave-to {
+                opacity: 0;
+            }
+
+            @keyframe slide-in {
+                from { transform: translateY(40px); }
+                to { transform: translateY(0);}
+            }
+
+            @keyframe slide-out {
+                from { transform: translateY(0); }
+                to { transform: translateY(40px);}
+            }
+
+            .slide-enter-active {
+                animation: slide-in 2s ease;
+                transition: opacity 2s;
+            }
+
+            .slide-leave-active {
+                animation: slide-out 2s ease;
+                transition: opacity 2s;
+            }
+
+            .slide-enter, .slide-leave-to {
+                opacity: 0;
+            }
+        </style>
+        ```
+    * `type`: definira quem é o "tono" da transição/animação ou seja o tempo dele é quem vai ser contado para definir o fim
+    * `appear`: para que a animação/transição ocorra no momento de carregar a tela se o componente já iniciar visível
+    
