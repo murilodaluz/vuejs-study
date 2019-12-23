@@ -410,7 +410,7 @@
         </script>
         ```
 #### Event bus 
-* caso tenha muito niveis para propagar a mensagem pode ser usado essa conceito se a aplicação foi simples
+* caso tenha muito níveis para propagar a mensagem pode ser usado essa conceito se a aplicação foi simples
 ## Slot [(Doc)](https://br.vuejs.org/v2/guide/components.html#Distribuicao-de-Conteudo-com-Slots)
 * Para passar informações dentro do corpo da tag do componente utiliza-se a tag `slot` no componente filho.
     - Ex: 
@@ -1108,3 +1108,444 @@ basta o bind ser feito em cada elemento com a mesma variável array.
     * Para trabalhar com javascript atua-se escutando os gatilhos 
     * São eles: `before-enter`, `after-enter`, `enter`, `enter-cancelled`, `before-leave`, `leave`, `after-leave` e `leave-cancelled`
     * Eles fazem parte dos ciclos de vida da tag `transition`
+## Router
+* `router-link`: Utilizado como gatilho para direcionar as rotas configuradas no router.js
+    * `to`: Atributo utilizado para definir destino da rota
+        * pode receber uma string contendo a rota ou um objeto contendo as configurações de rota
+            - Ex:
+                ```html
+                [...]
+                <router-link to="/produtos/1/editar" > 
+                    Editar produto </router-link>
+                <router-link :to="`/produtos/${id}/editar`" > 
+                    Editar produto </router-link>
+                <router-link :to="{ path:'``/produtos/${id}/editar``' params:{ id: id}, query: { complemento: true, lingua: 'pt'  }  }" > 
+                    Editar produto </router-link>
+                [...]
+                ```
+            * `path`: Propriedade para passar o rota no objeto do **to**.
+            * `params`: Objeto contendo os parâmetros que serão passados para o componente.
+                * Os valores da query podem ser acessados no `$route.params.nomeDoParametro`
+                * Caso seja marcado a rota como **props: true** também é acessível com uma propriedade do componente
+            * `query`: São os os parâmetros enviador pela query da url.
+                * Os valores da query podem ser acessados no `$route.query.nomeDaVariavel`
+            * `name`: Nome da rota, caso definido.
+
+    * `tag`: por padrão o router-link gera uma tag anchor (`<a>`) no html final, para poder alterar esse comportamento utiliza-se o atributo **tag**
+        - Ex:
+            ```html
+            <template>
+                <ul>
+                    <!-- router-link sera renderizado como um tag <li> -->
+                    <router-link to="/" tag="li"><a> Início </a></router-link>
+                    <router-link to="/produtos" tag="li"><a> Produtos </a></router-link>
+                </ul>
+            </template>
+            <script>
+                export default {
+
+                }
+            </script>
+            ```
+    * `active-class`: utilizado para setar a classe css responsável pelo efeito ativo do link baseado na rota
+        * `exact`: Para que ele só considera ativo quando a rota é exatamente a mesmo a não uma sub-rota
+        - Ex:
+            ```html
+            <template>
+                <ul>
+                    <!-- Quando estiver na rota '/' ira aplicar o css atribuído a classe 'active' -->
+                    <!-- O atributo 'exact' faz com que a classe só seja aplicado caso a rota seja exatamente '/' caso seja '/produtos' deixara de aplicar -->
+                    <router-link to="/" tag="li" active-class="active" exact>
+                        <a> Início </a></router-link>
+                    <!-- Se aplicado o css na rota '/produtos' -->
+                    <!-- Nesse caso sem o exact existindo qualquer outra rota '/produtos/qualquercoisa' continuara aplicando pois ainda contem o '/produtos' -->
+                    <router-link to="/produtos" tag="li" active-class="active" >
+                        <a> Produtos </a></router-link>
+                </ul>
+            </template>
+            <script>
+                export default {
+
+                }
+            </script>
+            <style scoped>
+                .active {
+                    background-color: "#000";
+                    color: "#FFF"
+                }
+            </style>
+            ```
+    * `name`: utilizado para definir um nome para a rota que pode ser utilizado para chamar a rota seja pelo `route-link` ou pela chamada via javascript
+* O router também possibilita a chamada da rota de forma imperativa através do javascript
+    - Ex:
+        ```javascript
+        import Vue from 'vue'
+        import Router from 'vue-router'
+        
+        Vue.use(Router);
+
+        const routes = [
+            {
+                path: '/',
+                component: Home
+            },
+            {
+                path: '/produtos'
+                component: ProdutosList,
+                name: 'listarProdutos'
+            }
+        ]
+        ```
+        ```html
+            <template>
+                <div>
+                    <h1> Produtos </h1>
+                    <button @click="goToInicio"> Início </button>
+                </div>
+            </template>
+            <script>
+                export default {
+                    methods:{
+                        goToInicio(){
+                            // Considerando que o router tenha sido registrado na instância do vue
+                            // Chamando a função 'push' ira redirecionar para a rota passada
+                            //this.$router.push('/');
+                            //this.$router.push({ path: '/' });
+                            this.$router.push({ name: 'listarProdutos' });
+                        }
+                    }
+                }
+            </script>
+        ```
+        ```html
+        <template>
+            <ul>
+                <!-- Quando estiver na rota '/' ira aplicar o css atribuído a classe 'active' -->
+                <!-- O atributo 'exact' faz com que a classe só seja aplicado caso a rota seja exatamente '/' caso seja '/produtos' deixara de aplicar -->
+                <router-link to="/" tag="li" active-class="active" exact>
+                    <a> Início </a></router-link>
+                <!-- Se aplicado o css na rota '/produtos' -->
+                <!-- Nesse caso sem o exact existindo qualquer outra rota '/produtos/qualquercoisa' continuara aplicando pois ainda contem o '/produtos' -->
+                <router-link to="/produtos" tag="li" active-class="active" >
+                    <a> Produtos </a></router-link>
+            </ul>
+        </template>
+        <script>
+            export default {
+
+            }
+        </script>
+        <style scoped>
+            .active {
+                background-color: "#000";
+                color: "#FFF"
+            }
+        </style>
+        ```
+* As rotas filhas podem ser aninhadas na configuração com a propriedade `children` na configuração
+    - Ex:
+        ```javascript
+        import Vue from 'vue'
+        import Router from 'vue-router'
+        
+        Vue.use(Router);
+
+        const routes = [
+            {
+                path: '/',
+                component: Home
+            },
+            {
+                path: '/produtos'
+                component: ProdutosList,
+                children: [
+                    { path: '', component: ProdutosLista },
+                    { path: ':id', component: ProdutosView }
+                ]
+            }
+        ]
+        ```
+    * Para renderizar os componente filhos deve ser adicionado dentro do elemento pai um `router-view` indicando onde deve ser renderizado os filhos
+        - Ex: 
+            ```html
+            <!-- Produtos.vue -->
+            <template>
+                <h1> Produtos </h1>
+                <!-- Área onde sera renderizado os componentes filhos associado na configuração da rota -->
+                <router-view />
+            </template>
+            [...]
+            ```
+    * Para navegar nos elementos filhos continua sendo com o a tag `router-link`
+        - Ex:
+            ```html
+            <!-- ProdutosDetalhe.vue -->
+            <template>
+                <div>
+                    Produto {{ id }}
+                    <!-- <route-link tag="button" :to="`/produtos/${id}/editar`"> Editar </route-link> -->
+                    <!-- Pode ser utilizado a forma passando um objeto para configurar a rota de destino do router-link -->
+                    <route-link tag="button" :to="{ name: 'editarProduto', params: {id: id}, query: {} }"> Editar </route-link>
+                </div>
+            </template>
+            <script>
+                export default {
+                    data() {
+                        return {
+                            props: ['id']
+                        }
+                    }
+                }
+            </script>
+            ```           
+            ```html
+            <!-- Produtos.vue -->
+            <template>
+                <div>
+                    <h1> Produtos </h1>
+                    <ul>
+                        <router-link to="/produtos/1" tag="li" > 
+                            <a> Produto 1 </a>
+                        </router-link>
+                        <router-link to="/produtos/1" tag="li" > 
+                            <a> Produto 1 </a>
+                        </router-link>
+                    </ul>
+                    <button @click="goToInicio"> Início </button>
+                </div>
+            </template>
+            <script>
+                export default {
+                    methods:{
+                        goToInicio(){
+                            // Considerando que o router tenha sido registrado na instância do vue
+                            // Chamando a função 'push' ira redirecionar para a rota passada
+                            this.$router.push('/');
+                        }
+                    }
+                }
+            </script>
+            ```
+            ```html
+            <template>
+                <ul>
+                    <!-- Quando estiver na rota '/' ira aplicar o css atribuído a classe 'active' -->
+                    <!-- O atributo 'exact' faz com que a classe só seja aplicado caso a rota seja exatamente '/' caso seja '/produtos' deixara de aplicar -->
+                    <router-link to="/" tag="li" active-class="active" exact>
+                        <a> Início </a></router-link>
+                    <!-- Se aplicado o css na rota '/produtos' -->
+                    <!-- Nesse caso sem o exact existindo qualquer outra rota '/produtos/qualquercoisa' continuara aplicando pois ainda contem o '/produtos' -->
+                    <router-link to="/produtos" tag="li" active-class="active" >
+                        <a> Produtos </a></router-link>
+                </ul>
+            </template>
+            <script>
+                export default {
+
+                }
+            </script>
+            <style scoped>
+                .active {
+                    background-color: "#000";
+                    color: "#FFF"
+                }
+            </style>
+            ```
+
+* Passagem de parâmetros pela rota
+    * Para passar um valor como o *id* de um item pelo parâmetro deve ser anotado na rota o parâmetro `/path:parametro`
+        - Ex:
+            ```javascript
+            import Vue from 'vue'
+            import Router from 'vue-router'
+
+            import Home from './components/Home'
+            import Produtos from './components/Produtos'
+            import ProdutosLista from './components/ProdutosLista'
+            import ProdutosView from './components/ProdutosView'
+            
+            Vue.use(Router);
+
+            const routes = [
+                {
+                    path: '/',
+                    component: Home
+                },
+                {
+                    path: '/produtos'
+                    component: Produtos,
+                    children: [
+                        { path: '', component: ProdutosLista },
+                        { path: ':id', component: ProdutosView }
+                    ]
+                },
+                //{
+                //    path: '/produtos:id'
+                //    component: ProdutosView
+                //}
+
+            ]
+            ```
+    * O parâmetro passado pelo url pode ser acessado pelo variável `this.$route.params` disponível no contexto do vue
+        * Para que o valor da variável seja alterado ao mudar para uma nova rota que tenha um parâmetro *id* deve ser passado por um *watch* a mudança
+        - Ex: 
+            ```javascript 
+            // ProdutosView
+            [...]
+            export default {
+                data() {
+                    return {
+                        id: this.$route.params.id;
+                    }                    
+                }
+                watch: {
+                    $route(to, from){
+                        // Atualizando o id com o novo parâmetro vindo da nova rota.
+                        this.id = to.$route.params.id;
+                    }
+                }
+            }
+            [...]
+            ```
+    * Os parâmetros em uma rota também podem ser passados para o componente como uma propriedade (props)
+        * Adicionando ao objeto de configuração o `props: true`, todas os parâmetros serão passados como propriedade
+        - Ex:
+            ```javascript
+            import Vue from 'vue'
+            import Router from 'vue-router'
+            
+            Vue.use(Router);
+
+            const routes = [
+                {
+                    path: '/',
+                    component: Home
+                },
+                {
+                    path: '/produtos'
+                    component: ProdutosList,
+                    children: [
+                        { path: '', component: ProdutosLista },
+                        { path: ':id', component: ProdutosView, props: true }
+                    ]
+                },
+                //{
+                //    path: '/produtos:id'
+                //    component: ProdutosView,
+                //    props: true
+                //}
+            ]
+            ```
+            ```html 
+            <!-- ProdutosView -->
+            <template>
+                <div>
+                    <span>id do produto: {{ id }}</span>
+                </div>
+            </template>
+            <script>
+            export default {
+                props: ['id']
+                //data() {
+                //    return {
+                //        id: this.$route.params.id;
+                //    }                    
+                //}
+                //watch: {
+                //    $route(to, from){
+                //        // Atualizando o id com o novo parâmetro vindo da nova rota.
+                //        this.id = to.$route.params.id;
+                //    }
+                //}
+            }
+            </script>
+            ```
+* router-view named [(Doc)](https://router.vuejs.org/guide/essentials/named-views.html)
+* Router redirect, na configuração no **router.js** é possível com o atributo `redirect` definir uma rota de redireção baseado em um caminho
+    - Ex:
+        ```javascript
+        import Vue from 'vue'
+        import Router from 'vue-router'
+        
+        Vue.use(Router);
+
+        const routes = [
+            {
+                path: '/',
+                component: Home
+            },
+            {
+                path: '/produtos'
+                component: ProdutosList,
+                children: [
+                    { path: '', component: ProdutosLista },
+                    { path: ':id', component: ProdutosView }
+                ]
+            },
+            {
+                path: '*', // Ira redirecionar todas as rota que não encontrar uma configuração para o '404.html'
+                redirect: '/error/404.html'
+            }
+            //{
+            //    path: '/redirect',
+            //    redirect: '/usuarios'
+            //}
+        ]
+        ```
+    * scroll behavior [(Doc)](https://router.vuejs.org/guide/advanced/scroll-behavior.html#async-scrolling)
+    * BeforeEach [(Doc)](https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards)
+    * BeforeEnter [(Doc)](https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards)
+    * beforeRouteEnter [(Div)](https://router.vuejs.org/guide/advanced/navigation-guards.html#in-component-guards)
+    * beforeRouteLeave [(Doc)](https://router.vuejs.org/guide/advanced/navigation-guards.html#in-component-guards)
+* Lazy load pelas rotas
+    * Sendo uma boa pratica só carregar as partes que serão utilizadas
+    * Para isso a parte de rotas do vue disponibilizada em conjunto com o webpack uma forma de configurar o carregamento o código lazy
+        - Ex:
+            - Ex:
+            ```javascript
+            import Vue from 'vue'
+            import Router from 'vue-router'
+
+            import Home from './components/Home'
+            import Produtos from './components/Produtos'
+            //import ProdutosLista from './components/ProdutosLista'
+            //import ProdutosView from './components/ProdutosView'
+            
+            Vue.use(Router);
+
+            const ProdutosLista = () => import('./components/ProdutosLista'); // Só sera carregado quando for acessado a roto para trazer esse componente
+            const ProdutosView = () => import('./components/ProdutosView'); // Só sera carregado quando for acessado a roto para trazer esse componente
+
+            const routes = [
+                {
+                    path: '/',
+                    component: Home
+                },
+                {
+                    path: '/produtos'
+                    component: Produtos,
+                    children: [
+                        { path: '', component: ProdutosLista },
+                        { path: ':id', component: ProdutosView }
+                    ]
+                },
+                //{
+                //    path: '/produtos:id'
+                //    component: ProdutosView
+                //}
+
+            ]
+            ```
+        * O Lazy loading pode ocorrer por grupos de código, basta utilizar a anotação do webpack dando um nome para o arquivo 
+          * `/* webpackChunkName: "produtos" */`
+            - Ex:  
+                ```javascript
+                [...]
+                // Quando for gerado os arquivo ira conter um com o nome de produto.js incapsulando o código dos componentes de forma agrupados
+                const ProdutosLista = () => import(/* webpackChunkName: "produtos" */'./components/ProdutosLista');
+                const ProdutosView = () => import(/* webpackChunkName: "produtos" */'./components/ProdutosView');
+                [...]
+                ```
+## Vuex
+* Controlador de estado
+* Instalando: `npm install --save vuex`

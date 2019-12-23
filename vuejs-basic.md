@@ -36,7 +36,7 @@
     * new Vue({}) instancia do Vuejs
         * `el` - Recebera a referencia referente a tag html que sera controlada. 
         * `data` - Atributos com os dados que serão trabalhados dentro da estrutura do vuejs
-        * `methods` - Metodos e funções que iram ser associadas a estrutura do Vuejs
+        * `methods` - Métodos e funções que iram ser associadas a estrutura do Vuejs
             * Para acessar os dados e métodos do vue dentro de um outro método utilizada-se `this.nomedoAtributo`
     * Todas as informações criadas dentro da instancia do Vue são criadas como reativas
     - Ex:
@@ -287,7 +287,7 @@
             computed: {
                 resultado() {
                     // **** Essa função só sera chamada quando a função 'aumentar' for chamada, pois é ela que altera a propriedade 'contador' ****
-                    console.log("Metodo chamado...");
+                    console.log("Método chamado...");
                     return this.contador >= 5 ? 'Maior ou igual a 5': 'Menor que 5';
                 }
             },
@@ -300,7 +300,7 @@
                 },
                 // ***** Se fosse usado essa função para interpolar o valor no resultado, no html deveria ser chamado como um função 'resultado()' e a cada renderização do DOM ele seria chamado tendo ou não atualizado o valor da propriedade 'contador' *****          
                 //resultado() {
-                //console.log("Metodo chamado...");
+                //console.log("Método chamado...");
                 //return this.contador >= 5 ? 'Maior ou igual a 5': 'Menor que 5';
                 //}
             }
@@ -332,7 +332,7 @@
             computed: {
                 resultado() {
                     // **** Essa função só sera chamada quando a função 'aumentar' for chamada, pois é ela que altera a propriedade 'contador' ****
-                    console.log("Metodo chamado...");
+                    console.log("Método chamado...");
                     return this.contador >= 5 ? 'Maior ou igual a 5': 'Menor que 5';
                 }
             },
@@ -354,7 +354,7 @@
                 },
                 // ***** Se fosse usado essa função para interpolar o valor no resultado, no html deveria ser chamado como um função 'resultado()' e a cada renderização do DOM ele seria chamado tendo ou não atualizado o valor da propriedade 'contador' *****          
                 //resultado() {
-                //console.log("Metodo chamado...");
+                //console.log("Método chamado...");
                 //return this.contador >= 5 ? 'Maior ou igual a 5': 'Menor que 5';
                 //}
             }
@@ -556,7 +556,7 @@ new Vue({
     ### Ciclo de vida da intancia [(Doc)](https://br.vuejs.org/v2/guide/instance.html#Ciclo-de-Vida-da-Instancia)
     ![Life cycle - Vuejs.org](./images/lifecycle.png)
 
-    * Para interação com cada etapa do ciclo de vida da intancia existem metodos para interagir com os estados.
+    * Para interação com cada etapa do ciclo de vida da instancia existem métodos para interagir com os estados.
     ```html
     <div id="app">
         <h1>{{ titulo }}</h1>
@@ -591,7 +591,7 @@ new Vue({
                 console.log('Antes de destruir');
             },
             destroyed(){
-                console.log('Destruido');
+                console.log('Destruído');
             }
 
         })
