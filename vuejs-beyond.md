@@ -1104,4 +1104,7 @@ basta o bind ser feito em cada elemento com a mesma variável array.
         ```
     * `type`: definira quem é o "tono" da transição/animação ou seja o tempo dele é quem vai ser contado para definir o fim
     * `appear`: para que a animação/transição ocorra no momento de carregar a tela se o componente já iniciar visível
-    
+* Essa transições/animações pode ser feitas também em javascript
+    * Para trabalhar com javascript atua-se escutando os gatilhos 
+    * São eles: `before-enter`, `after-enter`, `enter`, `enter-cancelled`, `before-leave`, `leave`, `after-leave` e `leave-cancelled`
+    * Eles fazem parte dos ciclos de vida da tag `transition`
