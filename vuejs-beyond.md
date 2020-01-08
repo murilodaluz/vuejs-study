@@ -1108,7 +1108,40 @@ basta o bind ser feito em cada elemento com a mesma variável array.
     * Para trabalhar com javascript atua-se escutando os gatilhos 
     * São eles: `before-enter`, `after-enter`, `enter`, `enter-cancelled`, `before-leave`, `leave`, `after-leave` e `leave-cancelled`
     * Eles fazem parte dos ciclos de vida da tag `transition`
-## Router
+## Router [(Doc)](https://router.vuejs.org/installation.html)
+* Vue possui o vue-router, utilizado para trabalhar a parte de roteamento das views.
+* Para realizar a instalação:
+  * `npm install vue-router`
+  * Cria-se o arquivo `src/router.js` 
+    - Ex
+    ```javascript
+    // router.js
+    import Vue from 'vue'
+    import Router from 'vue-router'
+
+    import Home from './components/Home'
+    import About from './components/About'
+
+    Vue.use(Router)
+
+    export default new Router({
+        mode: 'history',
+        routes: [
+            { path: '/', component: Home },
+            { path: '/about', component: About }
+        ]
+    })
+    ```
+    * E deve ser importado o arquivo no `main.js`
+    ```javascript
+    [...]
+    import router from './router'
+    [...]
+    new Vue({
+        router,
+        render: h => h(App),
+    }).$mount('#app')
+    ```
 * `router-link`: Utilizado como gatilho para direcionar as rotas configuradas no router.js
     * `to`: Atributo utilizado para definir destino da rota
         * pode receber uma string contendo a rota ou um objeto contendo as configurações de rota
